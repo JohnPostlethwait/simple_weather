@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!-- Leave this notice please, give credit where it's due -->
+<!-- Widget code originally by @FIF7Y - http://www.fif7y.com -->
+<!-- Widget code edited by @jpostlethwait - http://johnpostlethwait.com -->
+<!-- MOD originally by << ZOOROPALG >> -->
+<!-- MOD edited by @jpostlethwait - http://johnpostlethwait.com -->
+
+  <head>
+    <title>Widget / code by @FIF7Y / Moded by ZOOROPALG / Further modded by John Postlethwait</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="Private/UserStyles.css" type="text/css">
+  </head>
+
+  <script type="text/javascript">
+    var GMT = 0,
+        postal,
+        updateInterval = 60,
+        locale = "2490383";
+
+    function onLoad () {
+      updateCalendarBar();
+      setInterval(updateCalendarBar, 60000);
+
+      validateWeatherLocation(escape(locale).replace(/^%u/g, "%"), setPostal);
+    }
+
+    function updateCalendarBar () {
+      var theDate = new Date(),
+          theWeekdayInt = theDate.getDay(),
+          theMonthInt = theDate.getMonth(),
+          theDay = theDate.getDate() < 10 ? ('0' + theDate.getDate()) : theDate.getDate(),
+          weekdaysArray = [],
+          monthsArray = [],
+          weekdaysArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+          theWeekday = weekdaysArray[theWeekdayInt],
+          theMonth = monthsArray[theMonthInt],
+          todayDisplay = theWeekday + " " + theMonth + " " + theDay;
+
+      document.getElementById("calendar").innerHTML = todayDisplay;
+    }
+
+    function setPostal (obj) {
+      if (obj.error == false) {
+        postal = escape(obj.cities[0].zip).replace(/^%u/g, "%")
+        weatherRefresherTemp();
+      } else {
+        document.getElementById("widget").className = "errorLocaleValidate";
+        setTimeout('validateWeatherLocation(escape(locale).replace(/^%u/g, "%"), setPostal)', Math.round(1000*60*5));
+      }
+    }
+
+    function dealWithWeather (obj) {
+      if (obj.error == false) {
+        document.getElementById("conditions").innerText= conditions57[obj.description];
+        document.getElementById("temperature").innerHTML=""+obj.temp+"&#176;";
+
+        sunriseh = obj.sunrise.substring(0,obj.sunrise.indexOf(":",0));
+        sunrisem = obj.sunrise.substring(obj.sunrise.indexOf(":",0)+1,obj.sunrise.indexOf(" ",0));
+        sunriseh = parseInt(sunriseh) + GMT;
+        sunseth = obj.sunset.substring(0,obj.sunset.indexOf(":",0));
+        sunsetm = obj.sunset.substring(obj.sunset.indexOf(":",0)+1,obj.sunset.indexOf(" ",0));
+        sunseth = parseInt(sunseth) + GMT;
+        sunseth = sunseth + 12;
+        dayhour = parseInt(sunriseh) + parseInt(sunrisem)/60;
+        nighthour = parseInt(sunseth) + parseInt(sunsetm)/60;
+
+        var timeOfSunset = ( sunseth < 12 ) ? "am" : "pm";
+        var timeOfSunrise = ( sunriseh < 12 ) ? "am" : "pm";
+        sunriseh = ( sunriseh > 12 ) ? sunriseh - 12 : sunriseh;
+        sunriseh = ( sunriseh == 0 ) ? 12 : sunriseh;
+        sunseth = ( sunseth > 12 ) ? sunseth - 12 : sunseth;
+        sunseth = ( sunseth == 0 ) ? 12 : sunseth;
+        obj.sunrise = sunriseh + ":" + sunrisem + timeOfSunrise;
+        obj.sunset = sunseth + ":" + sunsetm + timeOfSunset;
+
+        document.getElementById("sunrise").innerText = "SUNRISE: " + obj.sunrise;
+        document.getElementById("sunset").innerText = "SUNSET: " + obj.sunset;
+        document.getElementById("weather-icon").src = "Private/WeatherIcons/"+obj.icon+".png";
+      } else {
+        //Could be down to any number of things, which is unhelpful...
+        document.getElementById("widget").className = "errorWeatherDataFetch";
+      }
+    }
+
+    function weatherRefresherTemp(){
+      fetchWeatherData(dealWithWeather,postal);
+      setTimeout(weatherRefresherTemp, 60*1000*updateInterval);
+    }
+
+    var conditions57 = [
+      "tornado",                  //0   tornado
+      "tropical storm",           //1   tropical storm
+      "hurricane",                //2   hurricane
+      "severe thunderstorms",     //3   severe thunderstorms
+      "thunderstorms",            //4   thunderstorms
+      "mixed rain and snow",      //5   mixed rain and snow
+      "mixed rain and sleet",     //6   mixed rain and sleet
+      "mixed snow and sleet",     //7   mixed snow and sleet
+      "freezing drizzle",         //8   freezing drizzle
+      "drizzle",                  //9   drizzle
+      "freezing rain",            //10  freezing rain
+      "showers",                  //11  showers
+      "showers",                  //12  showers
+      "snow flurries",            //13  snow flurries
+      "light snow showers",       //14  light snow showers
+      "blowing snow",             //15  blowing snow
+      "snow",                     //16  snow
+      "hail",                     //17  hail
+      "sleet",                    //18  sleet
+      "dust",                     //19  dust
+      "foggy",                    //20  foggy
+      "haze",                     //21  haze
+      "smoky",                    //22  smoky
+      "blustery",                 //23  blustery
+      "windy",                    //24  windy
+      "cold",                     //25  cold
+      "cloudy",                   //26  cloudy
+      "mostly cloudy",            //27  mostly cloudy (night)
+      "mostly cloudy",            //28  mostly cloudy (day)
+      "partly cloudy",            //29  partly cloudy (night)
+      "partly cloudy",            //30  partly cloudy (day)
+      "clear",                    //31  clear (night)
+      "sunny",                    //32  sunny
+      "fair",                     //33  fair (night)
+      "fair",                     //34  fair (day)
+      "mixed rain and hail",      //35  mixed rain and hail
+      "hot",                      //36  hot
+      "isolated thunderstorms",   //37  isolated thunderstorms
+      "scattered thunderstorms",  //38  scattered thunderstorms
+      "scattered thunderstorms",  //39  scattered thunderstorms
+      "scattered showers",        //40  scattered showers
+      "heavy snow",               //41  heavy snow
+      "scattered snow showers",   //42  scattered snow showers
+      "heavy snow",               //43  heavy snow
+      "partly cloudy",            //44  partly cloudy
+      "thundershowers",           //45  thundershowers
+      "snow showers",             //46  snow showers
+      "isolated thundershowers",  //47  isolated thundershowers
+      "not available",            //3200   not available
+    ];
+
+    function constructError (string) {
+      return { error:true, errorString:string };
+    }
+
+    function findChild (element, nodeName) {
+      var child;
+      for (child = element.firstChild; child != null; child = child.nextSibling) {
+        if (child.nodeName == nodeName) return child;
+      }
+      return null;
+    }
+
+    function fetchWeatherData (callback, zip) {
+      url="http://weather.yahooapis.com/forecastrss?u=f&w=" //u=Farenheit, because accuWeather sucks
+      var xml_request = new XMLHttpRequest();
+      xml_request.onload = function(e) {xml_loaded(e, xml_request, callback);}
+      xml_request.overrideMimeType("text/xml");
+      xml_request.open("GET", url+zip);
+      xml_request.setRequestHeader("Cache-Control", "no-cache");
+      xml_request.send(null);
+      return xml_request;
+    }
+
+    function xml_loaded (event, request, callback) {
+      if (request.responseXML) {
+        var obj = {error:false, errorString:null};
+        var effectiveRoot = findChild(findChild(request.responseXML, "rss"), "channel");
+        obj.realFeel = findChild(effectiveRoot, "yweather:wind").getAttribute("chill");//Only accounts for windChill
+
+        obj.sunrise = findChild(effectiveRoot, "yweather:astronomy").getAttribute("sunrise");//Sunrise
+        obj.sunset = findChild(effectiveRoot, "yweather:astronomy").getAttribute("sunset");//Sunset
+
+        conditionTag = findChild(findChild(effectiveRoot, "item"), "yweather:condition");
+        obj.temp = conditionTag.getAttribute("temp");
+        obj.icon = conditionTag.getAttribute("code");
+        obj.description = conditionTag.getAttribute("code");
+        callback (obj);
+      } else {
+        callback ({error:true, errorString:"XML request failed. no responseXML"});
+      }
+    }
+
+    function validateWeatherLocation (location, callback) {
+      var obj = { error: false, errorString: null, cities: new Array };
+      obj.cities[0] = {zip: location}; //Not very clever, are we?
+      callback (obj);
+    }
+  </script>
+
+  <body onLoad="onLoad()">
+    <div id="widget">
+      <img id="weather-icon" src="Private/WeatherIcons/dunno.png">
+      <p id="temperature"></p>
+      <p id="conditions"></p>
+      <p id="calendar"></p>
+      <div id="rise-set">
+        <p id="sunrise"></p>
+        <p id="sunset"></p>
+      </div>
+    </div>
+  </body>
+</html>

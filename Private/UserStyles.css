@@ -1,0 +1,94 @@
+/* *************************************** */
+/* Leave this notice please, give creadit where it's due */
+/* Widget code by @FIF7Y - http://www.fif7y.com */
+/* MOD by << ZOOROPALG >> */
+/* Further refinements by John Postlethwait */
+
+
+
+/* *************************************** */
+/* *************** TEXTS ***************** */
+@font-face {
+	font-family: 'widgetfont';
+	src: url('./widgetfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color:#1E1E1E;
+	color: rgb(255, 255, 255);
+	width: 320px;
+	height: 568px;
+	background-size: 320px 568px;
+	z-index: 1;
+	background-image: url(./background.png);
+	background-repeat: no-repeat;
+	text-shadow: #222 2px 2px 2px;
+}
+
+#widget {
+	font-family: 'widgetfont';
+	opacity: 0.7;
+	position: relative;
+	z-index: 3;
+	height: 150px;
+	top: 300px;
+	width: 320px;
+}
+
+#weather-icon {
+	height: 125px;
+	position: absolute;
+	top: 17px;
+	left: 97px;
+}
+
+#temperature {
+	opacity: 1;
+	position: absolute;
+	font-size: 26px;
+	width: 320px;
+	text-shadow: #000 2px 2px 3px;
+	text-align: center;
+	top: 75px;
+}
+
+#conditions {
+	width: 320px;
+	text-align: center;
+	font-size: 16px;
+	position: relative;
+	top: 166px;
+	text-transform: uppercase;
+}
+
+#rise-set {
+	position: relative;
+	top: -25px;
+	left: 16px;
+}
+
+#sunrise,
+#sunset {
+	text-shadow: #222 1px 1px 2px;
+	text-align: left;
+	font-size: 12px;
+}
+
+#calendar {
+	text-align: right;
+	font-size: 16px;
+	line-height: 16px;
+	text-shadow: #222 1px 1px 2px;
+	width: 304px;
+	top: -10px;
+	position: relative;
+	padding-right: 16px;
+	text-transform: lowercase;
+}
