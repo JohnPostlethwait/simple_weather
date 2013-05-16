@@ -19,9 +19,17 @@
 
     function onLoad () {
       updateCalendarBar();
-      setInterval(updateCalendarBar, 60000);
+      setInterval(updateCalendarBar, 10000);
 
-      validateWeatherLocation(escape(locale).replace(/^%u/g, "%"), setPostal);
+      navigator.geolocation.getCurrentPosition(function (f, e) {
+        console.log(f);
+        console.log(e);
+      });
+
+      // Wait 5 seconds for the phone to establish a data connection.
+      setTimeout(function () {
+        validateWeatherLocation(escape(locale).replace(/^%u/g, "%"), setPostal);
+      }, 5000);
     }
 
     function updateCalendarBar () {
@@ -35,7 +43,7 @@
           monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
           theWeekday = weekdaysArray[theWeekdayInt],
           theMonth = monthsArray[theMonthInt],
-          todayDisplay = theWeekday + " " + theMonth + " " + theDay;
+          todayDisplay = theWeekday + ", " + theMonth + " " + theDay;
 
       document.getElementById("calendar").innerHTML = todayDisplay;
     }
@@ -77,6 +85,7 @@
         document.getElementById("sunrise").innerText = "SUNRISE: " + obj.sunrise;
         document.getElementById("sunset").innerText = "SUNSET: " + obj.sunset;
         document.getElementById("weather-icon").src = "Private/WeatherIcons/"+obj.icon+".png";
+        document.getElementById("weather-icon").className = "";
       } else {
         //Could be down to any number of things, which is unhelpful...
         document.getElementById("widget").className = "errorWeatherDataFetch";
@@ -153,7 +162,7 @@
     }
 
     function fetchWeatherData (callback, zip) {
-      url="http://weather.yahooapis.com/forecastrss?u=f&w=" //u=Farenheit, because accuWeather sucks
+      url="http://weather.yahooapis.com/forecastrss?u=f&w=";
       var xml_request = new XMLHttpRequest();
       xml_request.onload = function(e) {xml_loaded(e, xml_request, callback);}
       xml_request.overrideMimeType("text/xml");
@@ -191,7 +200,7 @@
 
   <body onLoad="onLoad()">
     <div id="widget">
-      <img id="weather-icon" src="Private/WeatherIcons/dunno.png">
+      <img id="weather-icon" class="loading" src="Private/loading.gif">
       <p id="temperature"></p>
       <p id="conditions"></p>
       <p id="calendar"></p>
